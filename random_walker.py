@@ -4,10 +4,6 @@ import random
 import math
 from matplotlib.animation import FuncAnimation
 
-# Parameters
-MAX_SCOPE_FOR_TORUS_VALUE = 100
-MAX_SCOPE_FOR_REDUCE_VALUE = 10
-
 # Global variables
 global size_row
 global size_col
@@ -73,10 +69,13 @@ if __name__ == '__main__':
 
     max_visit = int(input("Enter size for maximal visit: "))
 
-    torus = np.random.randint(-1 * MAX_SCOPE_FOR_TORUS_VALUE, -1, (size_row, size_col), dtype='int64')
-
     init_x = int(input("Enter initial position X of Random Walker: "))
     init_y = int(input("Enter initial position Y of Random Walker: "))
+
+    max_scope_for_torus_value = int(input("Enter maximal value for initialize value of torus: "))
+    max_scope_for_reduce_value = int(input("Enter maximal value for reduce value of torus: "))
+
+    torus = np.random.randint(-1 * max_scope_for_torus_value, -1, (size_row, size_col), dtype='int64')
 
     x_locations = []
     y_locations = []
@@ -148,7 +147,7 @@ if __name__ == '__main__':
         # reduces all the values of torus
         for x in range(size_row):
             for y in range(size_col):
-                torus[x][y] -= np.random.randint(1, MAX_SCOPE_FOR_REDUCE_VALUE)
+                torus[x][y] -= np.random.randint(1, max_scope_for_reduce_value)
 
         ax.clear()
         #ax.plot(x_locations, y_locations, color='blue', marker='o', linestyle='dashed', markersize=3)
