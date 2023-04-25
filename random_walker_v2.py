@@ -7,7 +7,6 @@ from matplotlib.animation import FuncAnimation
 # Global variables
 size_row = 10
 size_col = 10
-#prob_for_the_deepest_value = 80
 max_visit = 100
 scope_for_reduce_value = 10
 max_scope_for_torus_value = 10
