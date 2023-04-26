@@ -114,6 +114,7 @@ if __name__ == '__main__':
     def animate(i):
         if count[0] >= max_visit:
             return
+
         text_to_be_visited_neighbor = ""
         for idx in range(random_walker_amount):
             # saves values on neighbors. used combined with dic_neighbors to find out position of specific cell in torus
@@ -170,22 +171,22 @@ if __name__ == '__main__':
 
             ax.clear()
             #ax.matshow(torus, cmap='gray')
+            if count[0] < max_visit - 1:
+                ax.plot(current_xy_pos_dic.get("y"), current_xy_pos_dic.get("x"), color='aqua', marker='o', linestyle='none', markersize=20)
+                # ax.scatter(current_xy_pos_dic.get("y"), current_xy_pos_dic.get("x"), color='cyan', marker='.')
 
             # set value of visited node after reducing all values of the torus
-            torus[x_pos_to_be_visited_neighbor][y_pos_to_be_visited_neighbor] = 0
-            #ax.text(x_pos_to_be_visited_neighbor, y_pos_to_be_visited_neighbor, str(0), va='center', ha='center')
+            torus[x_pos_to_be_visited_neighbor][y_pos_to_be_visited_neighbor] = 1
 
         # reduces all the values of torus
         for x in range(size_row):
             for y in range(size_col):
-                is_at_current_position = False
-                for i in range(random_walker_amount):
-                    if x is current_xy_pos_dic.get("x")[i] and y is current_xy_pos_dic.get("y")[i]:
-                        is_at_current_position = True
-                        break
-                if not is_at_current_position:
-                    torus[x][y] = torus[x][y] - scope_for_reduce_value
-                # ax.text(y, x, str(torus[x][y]), va='center', ha='center')
+                if torus[x][y] == 1:
+                    torus[x][y] = 0
+                else:
+                    # torus[x][y] = torus[x][y] - scope_for_reduce_value
+                    torus[x][y] -= np.random.randint(1, scope_for_reduce_value)
+                ax.text(y, x, str(int(torus[x][y])), va='center', ha='center')
 
         # ax.plot(x_locations, y_locations, color='blue', marker='o', linestyle='dashed', markersize=3)
         #ax.scatter(x_locations, y_locations, color='blue', marker='.')
@@ -193,12 +194,12 @@ if __name__ == '__main__':
         #fig.suptitle("Visit Count: " + str(count[0]) + "/" + str(max_visit), fontsize=16)
         ax.set_xlim([-1, size_row])
         ax.set_ylim([-1, size_col])
-        print("Visit Count: " + str(count[0]), text_to_be_visited_neighbor, sep=" at ")
+        #print("Visit Count: " + str(count[0]), text_to_be_visited_neighbor, sep=" at ")
 
         # print the torus with its values as matrix at the end to show the 3d landscape
-        print(np.matrix(torus))
+        #print(np.matrix(torus))
         # plot the torus as a greyscale matrix
-        plt.imshow(torus, cmap='gray')
+        plt.imshow(torus, cmap='autumn')
 
         text_prob_for_the_deepest_value = ""
         for prob in prob_for_the_deepest_value:
@@ -208,14 +209,12 @@ if __name__ == '__main__':
         for horizontal, vertical in zip(current_x_pos, current_y_pos):
             text_current_xy_pos += "[" + str(vertical) + "," + str(horizontal) + "]" + " "
 
-        plot_text = 'Torus size: ' + str(size_row) + ' x ' + str(size_col) \
+        plot_text = 'Time steps: ' + str(count[0]) \
+                    + '\nNumber of random walker: ' + str(int(len(random_walker_init_pos))) \
                     + '\nProbabilty: ' + text_prob_for_the_deepest_value \
-                    + '\nTime steps: ' + str(count[0]) \
-                    + '\nAltitude reduction:  = -' + str(scope_for_reduce_value) \
+                    + '\nAltitude reduction:  = 1 to ' + str(scope_for_reduce_value) \
                     + '\nRandom Walker current position: ' + text_current_xy_pos
         plt.suptitle(plot_text,  fontsize=10, horizontalalignment='left', verticalalignment='top', x=.3, y=.99)
-        # plot the torus as a greyscale matrix
-        plt.imshow(torus, cmap='gray')
 
     ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
     plt.show()
