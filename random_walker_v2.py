@@ -175,7 +175,8 @@ if __name__ == '__main__':
                 ax.plot(current_xy_pos_dic.get("y"), current_xy_pos_dic.get("x"), color='aqua', marker='o', linestyle='none', markersize=20)
                 # ax.scatter(current_xy_pos_dic.get("y"), current_xy_pos_dic.get("x"), color='cyan', marker='.')
 
-            # set value of visited node after reducing all values of the torus
+            # set value of visited node temporarily on 1 to distinguish visited node on reduce all values
+            # in order to avoid reduce its value already visited
             torus[x_pos_to_be_visited_neighbor][y_pos_to_be_visited_neighbor] = 1
 
         # reduces all the values of torus
