@@ -10,8 +10,9 @@ size_col = 10
 max_visit = 100
 scope_for_reduce_value = 10
 max_scope_for_torus_value = 10
-random_walker_init_pos = [[5,5],[0,0],[1,3]]
-prob_for_the_deepest_value = [80, 70, 50]
+random_walker_init_pos = [[5,5]]
+prob_for_the_deepest_value = [100]
+should_calc_min_value_in_neighborhood = False
 random_walker_amount = len(random_walker_init_pos)
 current_x_pos = [None] * random_walker_amount
 current_y_pos = [None] * random_walker_amount
@@ -47,7 +48,7 @@ def calcu_probs(highest_prob):
 
 
 # if a node is not the the lowest node in its neighborhood, altitude will be calculated as the average value of all neighbors
-def calcu_value_of_neighbor(x_pos, y_pos, torus):
+def calcu_min_value_in_neighborhood(x_pos, y_pos, torus):
     values_of_neighbors = []
     for ix in [-1, 1]:
         neighbor_x_pos = x_pos + ix
@@ -129,7 +130,10 @@ if __name__ == '__main__':
                     x_pos = size_row - 1
                 if x_pos >= size_row:
                     x_pos = x_pos - size_row
-                value = calcu_value_of_neighbor(x_pos, y_pos, torus)
+                if should_calc_min_value_in_neighborhood:
+                    value = calcu_min_value_in_neighborhood(x_pos, y_pos, torus)
+                else:
+                    value = torus[x_pos][y_pos]
                 if str(value) in dic_neighbors:
                     # to avoid to overwrite dic_neighbors if a value is already existing
                     value += (i * 1.0) / max_visit
@@ -143,7 +147,10 @@ if __name__ == '__main__':
                     y_pos = size_col - 1
                 if y_pos >= size_col:
                     y_pos = y_pos - size_col
-                value = calcu_value_of_neighbor(x_pos, y_pos, torus)
+                if should_calc_min_value_in_neighborhood:
+                    value = calcu_min_value_in_neighborhood(x_pos, y_pos, torus)
+                else:
+                    value = torus[x_pos][y_pos]
                 if str(value) in dic_neighbors:
                     # to avoid to overwrite dic_neighbors if a value is already existing
                     value += (i * 1.0) / max_visit
@@ -155,7 +162,9 @@ if __name__ == '__main__':
             # calculates the rest probabilities to choose other neighbors not with the smallest value
             probabilities = calcu_probs(prob_for_the_deepest_value[idx])
             # chooses a value based on probability
-            chosen_value = pick_value_based_on_probability(neighbors, probabilities)
+            chosen_value = pick_value_based_on_weights(neighbors, probabilities)
+            # Debugging logs
+            print(probabilities,neighbors,chosen_value,sep=" => ")
             # returned value from numpy.random.choice is float-type
             if str(chosen_value[0]) not in dic_neighbors:
                 chosen_value = chosen_value.astype(int)
