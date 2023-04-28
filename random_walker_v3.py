@@ -5,16 +5,18 @@ import math
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 
+# uses calcu_min_value_in_neighborhood to reduce values of all nodes
+
 # Global variables
 save_aniamation = False
 size_row = 10
 size_col = 10
 max_visit = 100
+reduction_frequency = 5
 scope_for_reduce_value = 10
-max_scope_for_torus_value = 10
-random_walker_init_pos = [[4,4],[4,4],[4,4],[4,4]]
-prob_for_the_deepest_value = [100,100,100,100]
-should_calc_min_value_in_neighborhood = False
+max_scope_for_torus_value = 100
+random_walker_init_pos = [[5,5], [3,7], [0,8], [1,2]]
+prob_for_the_deepest_value = [80, 80, 100, 100]
 random_walker_amount = len(random_walker_init_pos)
 current_x_pos = [None] * random_walker_amount
 current_y_pos = [None] * random_walker_amount
@@ -103,7 +105,7 @@ if __name__ == '__main__':
     if save_aniamation:
         fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
     else:
-        fig, ax = plt.subplots(figsize=(6, 5))
+        fig, ax = plt.subplots(figsize=(7, 6))
 
     current_xy_pos_dic = {"x": current_x_pos, "y": current_y_pos}
 
@@ -135,10 +137,8 @@ if __name__ == '__main__':
                     x_pos = size_row - 1
                 if x_pos >= size_row:
                     x_pos = x_pos - size_row
-                if should_calc_min_value_in_neighborhood:
-                    value = calcu_min_value_in_neighborhood(x_pos, y_pos, torus)
-                else:
-                    value = torus[x_pos][y_pos]
+                #value = calcu_value_of_neighbor(x_pos, y_pos, torus)
+                value = torus[x_pos][y_pos]
                 if str(value) in dic_neighbors:
                     # to avoid to overwrite dic_neighbors if a value is already existing
                     value += (i * 1.0) / max_visit
@@ -152,10 +152,8 @@ if __name__ == '__main__':
                     y_pos = size_col - 1
                 if y_pos >= size_col:
                     y_pos = y_pos - size_col
-                if should_calc_min_value_in_neighborhood:
-                    value = calcu_min_value_in_neighborhood(x_pos, y_pos, torus)
-                else:
-                    value = torus[x_pos][y_pos]
+                #value = calcu_value_of_neighbor(x_pos, y_pos, torus)
+                value = torus[x_pos][y_pos]
                 if str(value) in dic_neighbors:
                     # to avoid to overwrite dic_neighbors if a value is already existing
                     value += (i * 1.0) / max_visit
@@ -168,6 +166,7 @@ if __name__ == '__main__':
             probabilities = calcu_probs(prob_for_the_deepest_value[idx])
             # chooses a value based on probability
             chosen_value = pick_value_based_on_weights(neighbors, probabilities)
+            # Debugging logs
             if save_aniamation:
                 print(probabilities, neighbors, chosen_value, sep=" => ")
             # returned value from numpy.random.choice is float-type
@@ -189,18 +188,19 @@ if __name__ == '__main__':
                 ax.plot(current_xy_pos_dic.get("y"), current_xy_pos_dic.get("x"), color='aqua', marker='o', linestyle='none', markersize=20)
                 # ax.scatter(current_xy_pos_dic.get("y"), current_xy_pos_dic.get("x"), color='cyan', marker='.')
 
-            # set value of visited node temporarily on 1 to distinguish visited node on reduce all values
-            # in order to avoid reduce its value already visited
+            # set value of visited node after reducing all values of the torus
             torus[x_pos_to_be_visited_neighbor][y_pos_to_be_visited_neighbor] = 1
 
         # reduces all the values of torus
         for x in range(size_row):
             for y in range(size_col):
-                if torus[x][y] == 1:
-                    torus[x][y] = 0
+                if torus [x][y] != 1:
+                    torus[x][y] = calcu_min_value_in_neighborhood(x, y, torus)
+                    if count[0] % reduction_frequency == 0:
+                        torus[x][y] = torus[x][y] - scope_for_reduce_value
+                        #torus[x][y] -= np.random.randint(1, scope_for_reduce_value)
                 else:
-                    # torus[x][y] = torus[x][y] - scope_for_reduce_value
-                    torus[x][y] -= np.random.randint(1, scope_for_reduce_value)
+                    torus[x][y] = 0
                 ax.text(y, x, str(int(torus[x][y])), va='center', ha='center')
 
         # ax.plot(x_locations, y_locations, color='blue', marker='o', linestyle='dashed', markersize=3)
@@ -213,7 +213,7 @@ if __name__ == '__main__':
 
         # print the torus with its values as matrix at the end to show the 3d landscape
         #print(np.matrix(torus))
-        # plot the torus as a greyscale matrix
+
         plt.imshow(torus, cmap='autumn')
 
         text_prob_for_the_deepest_value = ""
@@ -222,24 +222,31 @@ if __name__ == '__main__':
 
         text_current_xy_pos = ""
         for horizontal, vertical in zip(current_x_pos, current_y_pos):
-            text_current_xy_pos += "[" + str(vertical) + "," + str(horizontal) + "]" + " "
+            text_current_xy_pos += "[" + str(vertical + 1) + "," + str(horizontal + 1) + "]" + " "
+
+        if max_scope_for_torus_value > 0:
+            a = '\ntorus altitude at start: -1 to -' + str(max_scope_for_torus_value)
+        else:
+            a = '\ntorus altitude at start: ' + str(max_scope_for_torus_value)
 
         plot_text = 'Time steps: ' + str(count[0]) \
                     + '\nNumber of random walker: ' + str(int(len(random_walker_init_pos))) \
                     + '\nProbabilty: ' + text_prob_for_the_deepest_value \
-                    + '\nAltitude reduction:  = 1 to ' + str(scope_for_reduce_value) \
-                    + '\nRandom Walker current position: ' + text_current_xy_pos
+                    + '\nRandom Walker current position: ' + text_current_xy_pos \
+                    + a \
+                    + '\nAltitude reduction: 1 to ' + str(scope_for_reduce_value) \
+
         plt.suptitle(plot_text,  fontsize=10, horizontalalignment='left', verticalalignment='top', x=.3, y=.99)
+
 
     ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
     if save_aniamation:
-        ani = FuncAnimation(fig, animate, frames=max_visit, interval=100, repeat=False)
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=5, metadata=dict(artist='Me'), bitrate=5000)
         ani.save('animation.mp4', writer=writer)
         plt.close()
     else:
-        ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
         plt.show()
+
 
 
