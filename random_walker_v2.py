@@ -6,7 +6,8 @@ from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 
 # Global variables
-save_aniamation = False
+save_animation = False
+saved_name = "animation.mp4"
 size_row = 10
 size_col = 10
 max_visit = 100
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     x_locations = []
     y_locations = []
 
-    if save_aniamation:
+    if save_animation:
         fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
     else:
         fig, ax = plt.subplots(figsize=(6, 5))
@@ -168,7 +169,7 @@ if __name__ == '__main__':
             probabilities = calcu_probs(prob_for_the_deepest_value[idx])
             # chooses a value based on probability
             chosen_value = pick_value_based_on_weights(neighbors, probabilities)
-            if save_aniamation:
+            if save_animation:
                 print(probabilities, neighbors, chosen_value, sep=" => ")
             # returned value from numpy.random.choice is float-type
             if str(chosen_value[0]) not in dic_neighbors:
@@ -232,11 +233,11 @@ if __name__ == '__main__':
         plt.suptitle(plot_text,  fontsize=10, horizontalalignment='left', verticalalignment='top', x=.3, y=.99)
 
     ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
-    if save_aniamation:
+    if save_animation:
         ani = FuncAnimation(fig, animate, frames=max_visit, interval=100, repeat=False)
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=5, metadata=dict(artist='Me'), bitrate=5000)
-        ani.save('animation.mp4', writer=writer)
+        ani.save(saved_name, writer=writer)
         plt.close()
     else:
         ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
