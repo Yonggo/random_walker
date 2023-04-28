@@ -8,7 +8,8 @@ from matplotlib.animation import FuncAnimation
 # uses calcu_min_value_in_neighborhood to reduce values of all nodes
 
 # Global variables
-save_aniamation = False
+save_animation = True
+saved_name = "animation.mp4"
 size_row = 10
 size_col = 10
 max_visit = 100
@@ -102,10 +103,10 @@ if __name__ == '__main__':
     x_locations = []
     y_locations = []
 
-    if save_aniamation:
+    if save_animation:
         fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
     else:
-        fig, ax = plt.subplots(figsize=(7, 6))
+        fig, ax = plt.subplots(figsize=(6, 5))
 
     current_xy_pos_dic = {"x": current_x_pos, "y": current_y_pos}
 
@@ -167,7 +168,7 @@ if __name__ == '__main__':
             # chooses a value based on probability
             chosen_value = pick_value_based_on_weights(neighbors, probabilities)
             # Debugging logs
-            if save_aniamation:
+            if save_animation:
                 print(probabilities, neighbors, chosen_value, sep=" => ")
             # returned value from numpy.random.choice is float-type
             if str(chosen_value[0]) not in dic_neighbors:
@@ -240,13 +241,10 @@ if __name__ == '__main__':
 
 
     ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
-    if save_aniamation:
+    if save_animation:
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=5, metadata=dict(artist='Me'), bitrate=5000)
-        ani.save('animation.mp4', writer=writer)
+        ani.save(saved_name, writer=writer)
         plt.close()
     else:
         plt.show()
-
-
-
