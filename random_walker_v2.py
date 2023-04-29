@@ -234,13 +234,11 @@ if __name__ == '__main__':
 
     ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
     if save_animation:
-        ani = FuncAnimation(fig, animate, frames=max_visit, interval=100, repeat=False)
         Writer = animation.writers['ffmpeg']
         writer = Writer(fps=5, metadata=dict(artist='Me'), bitrate=5000)
         ani.save(saved_name, writer=writer)
         plt.close()
     else:
-        ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
         plt.show()
 
 
