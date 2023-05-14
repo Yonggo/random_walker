@@ -10,6 +10,7 @@ from matplotlib.animation import FuncAnimation
 # Global variables
 save_animation = True
 saved_name = "animation.mp4"
+saved_animation_size = (14,9)
 size_row = 10
 size_col = 10
 max_visit = 100
@@ -104,7 +105,7 @@ if __name__ == '__main__':
     y_locations = []
 
     if save_animation:
-        fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
+        fig, ax = plt.subplots(figsize=saved_animation_size, dpi=300)
     else:
         fig, ax = plt.subplots(figsize=(6, 5))
 
@@ -230,7 +231,7 @@ if __name__ == '__main__':
         else:
             a = '\ntorus altitude at start: ' + str(max_scope_for_torus_value)
 
-        plot_text = 'Time steps: ' + str(count[0]) \
+        plot_text = 'Time steps: ' + str(count[0]) + '/' + str(max_visit) \
                     + '\nNumber of random walker: ' + str(int(len(random_walker_init_pos))) \
                     + '\nProbabilty: ' + text_prob_for_the_deepest_value \
                     + '\nRandom Walker current position: ' + text_current_xy_pos \

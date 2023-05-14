@@ -8,6 +8,7 @@ from matplotlib.animation import FuncAnimation
 # Global variables
 save_animation = False
 saved_name = "animation.mp4"
+saved_animation_size = (14,9)
 size_row = 10
 size_col = 10
 max_visit = 100
@@ -102,7 +103,7 @@ if __name__ == '__main__':
     y_locations = []
 
     if save_animation:
-        fig, ax = plt.subplots(figsize=(8, 8), dpi=300)
+        fig, ax = plt.subplots(figsize=saved_animation_size, dpi=300)
     else:
         fig, ax = plt.subplots(figsize=(6, 5))
 
@@ -225,7 +226,7 @@ if __name__ == '__main__':
         for horizontal, vertical in zip(current_x_pos, current_y_pos):
             text_current_xy_pos += "[" + str(vertical) + "," + str(horizontal) + "]" + " "
 
-        plot_text = 'Time steps: ' + str(count[0]) \
+        plot_text = 'Time steps: ' + str(count[0]) + '/' + str(max_visit) \
                     + '\nNumber of random walker: ' + str(int(len(random_walker_init_pos))) \
                     + '\nProbabilty: ' + text_prob_for_the_deepest_value \
                     + '\nAltitude reduction:  = 1 to ' + str(scope_for_reduce_value) \
