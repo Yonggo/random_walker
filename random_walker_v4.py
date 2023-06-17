@@ -5,6 +5,13 @@ import math
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 
+
+class RandomWalker:
+    def __init__(self, random_walker_init_pos, prob_for_the_deepest_value):
+        self.random_walker_init_pos = random_walker_init_pos
+        self.prob_for_the_deepest_value = prob_for_the_deepest_value
+
+
 # Global variables
 save_animation = True
 saved_name = "animation.mp4"
@@ -14,12 +21,7 @@ max_visit = 100
 reduction_frequency = 5
 scope_for_reduce_value = 10
 max_scope_for_torus_value = 100
-
-class RandomWalker:
-    def __init__(self, random_walker_init_pos, prob_for_the_deepest_value):
-        self.random_walker_init_pos = random_walker_init_pos
-        self.prob_for_the_deepest_value = prob_for_the_deepest_value
-
+images = [100, 200, 500, 1000, 2000, 5000, 10000]
 
 case_list = \
     [
@@ -241,6 +243,9 @@ if __name__ == '__main__':
                         + '\nAltitude reduction: 1 to ' + str(scope_for_reduce_value) \
 
             plt.suptitle(plot_text,  fontsize=10, horizontalalignment='left', verticalalignment='top', x=.3, y=.99)
+
+            if count[0] in images:
+                plt.savefig('fig_' + str(count[0]) + '.png')
 
 
         ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
