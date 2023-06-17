@@ -245,7 +245,8 @@ if __name__ == '__main__':
             plt.suptitle(plot_text,  fontsize=10, horizontalalignment='left', verticalalignment='top', x=.3, y=.99)
 
             if count[0] in images:
-                plt.savefig('fig_' + str(count[0]) + '.png')
+                fileName = "_".join(("fig", str(count[0]), "case", str(case_num)))
+                plt.savefig(fileName + '.png')
 
 
         ani = FuncAnimation(fig, animate, frames=max_visit, interval=10, repeat=False)
